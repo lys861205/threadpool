@@ -1,8 +1,3 @@
-// 2008-02-23 17:06
-// UVPThread.h
-// guosh
-// Ïß³ÌÀàÊµÏÖ
-
 
 #pragma once
 
@@ -28,30 +23,30 @@ public:
 public:
 	virtual BOOL Start(PFTHREADPROC pfThreadProc = NULL, void *pParam = NULL);
 
-	// ¼ì²âÍË³öĞÅºÅ
+	// æ£€æµ‹é€€å‡ºä¿¡å·
 	virtual BOOL TryWaitQuit(uint32 uMilliseconds = 0);
 
-	//  Ïß³ÌÊÇ·ñÍË³ö
+	//  çº¿ç¨‹æ˜¯å¦é€€å‡º
 	virtual BOOL IsExitThread();
 
-	// ·¢ËÍÍ£Ö¹ÃüÁî
+	// å‘é€åœæ­¢å‘½ä»¤
 	virtual void PostStop();
 
-	// µÈ´ıÏß³Ì½áÊø,»ØÊÕ×ÊÔ´
+	// ç­‰å¾…çº¿ç¨‹ç»“æŸ,å›æ”¶èµ„æº
 	virtual void Join();
 
-	// É±ËÀÏß³Ì(²»½¨ÒéÊ¹ÓÃ,¿ÉÊ¹ÓÃPostStopÀ´Í¨ÖªÏß³Ì½áÊø)
+	// æ€æ­»çº¿ç¨‹(ä¸å»ºè®®ä½¿ç”¨,å¯ä½¿ç”¨PostStopæ¥é€šçŸ¥çº¿ç¨‹ç»“æŸ)
 	void Kill();
 
-	// »ñÈ¡Ïß³ÌID
+	// è·å–çº¿ç¨‹ID
 	uint32 ThreadID() { return m_uThreadID; };
 
 
 public:
-	// »ñÈ¡±¾Ïß³ÌID
+	// è·å–æœ¬çº¿ç¨‹ID
 	static uint32 SelfID();
 
-	// Ïß³ÌĞİÃßÖ¸¶¨ºÁÃëÖµ
+	// çº¿ç¨‹ä¼‘çœ æŒ‡å®šæ¯«ç§’å€¼
 	static void Sleep(uint32 nMillisecond);
 
 #ifdef OS_WINDOWS
@@ -61,7 +56,7 @@ public:
 protected:
 	virtual void Entry();
 
-	// Ïß³Ì×ÔÒÑ½áÊø(²»½¨ÒéÊ¹ÓÃ,¿ÉÖ±½ÓreturnÍË³öÏß³ÌÖ´ĞĞº¯Êı)
+	// çº¿ç¨‹è‡ªå·²ç»“æŸ(ä¸å»ºè®®ä½¿ç”¨,å¯ç›´æ¥returné€€å‡ºçº¿ç¨‹æ‰§è¡Œå‡½æ•°)
 	void Exit();
 
 private:
@@ -78,7 +73,7 @@ private:
 	PFTHREADPROC		m_pfThreadProc;
 	void				*m_pParam;
 
-	UVPEvent			m_evQuit;		// ÕâÀï±ØĞëÊ¹ÓÃÊÖ¹¤ÖØÉèÊÂ¼ş
+	UVPEvent			m_evQuit;		// è¿™é‡Œå¿…é¡»ä½¿ç”¨æ‰‹å·¥é‡è®¾äº‹ä»¶
 };
 
 } // namespace uvp
