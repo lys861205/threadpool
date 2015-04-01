@@ -1,7 +1,3 @@
-// 2008-02-23 17:06
-// UVPThread.cpp
-// guosh
-// Ïß³ÌÀàÊµÏÖ
 
 #include "UVPThread.h"
 
@@ -52,7 +48,7 @@ BOOL UVPThread::Start(PFTHREADPROC pfThreadProc, void *pParam)
 	return TRUE;
 }
 
-// ¼ì²âÍË³öĞÅºÅ
+// æ£€æµ‹é€€å‡ºä¿¡å·
 BOOL UVPThread::TryWaitQuit(uint32 uMilliseconds)
 {
 	return m_evQuit.TryWait(uMilliseconds);
@@ -99,14 +95,14 @@ unsigned UVPThread::_Entry(void* pParam)
 	return 0;
 }
 
-// Ïß³ÌĞİÃßÖ¸¶¨ºÁÃëÖµ
+// çº¿ç¨‹ä¼‘çœ æŒ‡å®šæ¯«ç§’å€¼
 void UVPThread::Sleep(uint32 nMillisecond)
 {
 	::Sleep(nMillisecond);
 	return;
 }
 
-// »ñÈ¡Ïß³Ì×ÔÉíID
+// è·å–çº¿ç¨‹è‡ªèº«ID
 uint32 UVPThread::SelfID(void)
 {
 	return (uint32)GetCurrentThreadId();
@@ -157,7 +153,7 @@ BOOL UVPThread::Start(PFTHREADPROC pfThreadProc, void *pParam)
 	return TRUE;
 }
 
-// ¼ì²âÍË³öĞÅºÅ
+// æ£€æµ‹é€€å‡ºä¿¡å·
 BOOL UVPThread::TryWaitQuit(uint32 uMilliseconds)
 {
 	return m_evQuit.TryWait(uMilliseconds);
@@ -203,7 +199,7 @@ void* UVPThread::_Entry(void *pParam)
 }
 
 
-// Ïß³ÌĞİÃßÖ¸¶¨ºÁÃëÖµ
+// çº¿ç¨‹ä¼‘çœ æŒ‡å®šæ¯«ç§’å€¼
 void UVPThread::Sleep(uint32 nMillisecond)
 {
 	struct timeval tv;
@@ -213,7 +209,7 @@ void UVPThread::Sleep(uint32 nMillisecond)
 	return;
 }
 
-// »ñÈ¡Ïß³Ì×ÔÉíID
+// è·å–çº¿ç¨‹è‡ªèº«ID
 uint32 UVPThread::SelfID(void)
 {
 	return (uint32)pthread_self();
@@ -221,7 +217,7 @@ uint32 UVPThread::SelfID(void)
 #endif//OS_LINUX
 
 
-//  Ïß³ÌÊÇ·ñÍË³ö
+//  çº¿ç¨‹æ˜¯å¦é€€å‡º
 BOOL UVPThread::IsExitThread()
 {
 	return TryWaitQuit();
