@@ -3,20 +3,35 @@
 #include <pthread.h>
 #include <unistd.h>
 #include <stdio.h>
-#include <error.h>
+#include <errno.h>
 #include <string>
+#include <sys/syscall.h>
 
 using namespace std;
 
-typedef void (*ThreadFunc)();
+
+namespace CurrentThread
+{
+	pid_t tid()
+	{
+		return syscall(__NR_gettid);
+	}
+	bool isMainThread()
+	{
+		return tid() == getpid();
+	}
+}
+
+typedef void (*ThreadFunc)(void*);
 
 class Thread
 {
 public:
-	Thread(const ThreadFunc& cb, const string& name):
+	Thread(const ThreadFunc& cb, void*arg, const string& name):
 		started_(false),
 		tid_(0),
 		tcb_(cb),
+        arg_(arg),
 		name_(name)
 	{}
 	~Thread()
@@ -50,12 +65,13 @@ private:
 	void _threadFun()
 	{
 		if (tcb_) 
-			tcb_();
+			tcb_(arg_);
 	}
 private:
 	bool started_;
 	pthread_t tid_;
 	ThreadFunc tcb_;
+    void* arg_;
 	string name_;
 };
 
