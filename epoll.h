@@ -2,12 +2,18 @@
 #define __epoll_h__
 
 #include <vector>
+#include <sys/epoll.h>
+#include <errno.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <assert.h>
+#include <unistd.h>
+#include "poller.h"
+#include "NetEvent.h"
 using namespace std;
 
 #define EPOLL_MAX 				256
 #define EPOLL_EVENT_INIT_SIZE	1024
-
-struct epoll_event;
 
 class EPoller : public Poller
 {
@@ -18,13 +24,13 @@ private:
 	static const int kDelete = 2;
 public:
 	EPoller():
-	epollfd_(create_epoll(EPOLL_MAX)),
+	epollfd_(epoll_create(EPOLL_MAX)),
 	eventVec_(EPOLL_EVENT_INIT_SIZE)
 	{
 		if ( epollfd_ < 0 )
 		{
 			printf("create_epoll failed, error:%d\n", errno);
-			exit(1);
+			abort();
 		}
 	}
 	~EPoller()
@@ -61,9 +67,7 @@ public:
 	}
 	int poll(int timeoutMs, NetEventList& rOutEventList)
 	{
-		int numEvents = ::epoll_wait(epollfd_, &eventVec_[0], 
-			static_cast<int>(eventVec_.size(),
-			timeoutMs);
+		int numEvents = ::epoll_wait(epollfd_, &eventVec_[0], static_cast<int>(eventVec_.size()),timeoutMs);
 		if ( numEvents == 0 )
 		{
 			//timeout
@@ -82,7 +86,7 @@ public:
 			for ( int i=0; i < numEvents; ++i )
 			{
 				struct epoll_event& rev = eventVec_[i];
-				NetEvent* tcpEv = rev.data.ptr;
+				NetEvent* tcpEv = (NetEvent*)rev.data.ptr;
 				tcpEv->set_revent(rev.events);
 				rOutEventList.push_back(tcpEv);
 			}
@@ -90,7 +94,6 @@ public:
 		return numEvents;
 	}
 private:
-	typedef
 	int epollfd_;
 	TEventList eventVec_;
 };

@@ -1,9 +1,15 @@
 #ifndef __Tcp_Event_H__
 #define __Tcp_Event_H__
 
+#include <iostream>
+#include <unistd.h>
+#include <sys/epoll.h> 
+using namespace std;
+
 #define EV_NONE		0x00
-#define	EV_READ		EPOLLIN|EPOLLERR
-#define EV_WRITE	EPOLLOUT|EPOLLERR
+#define	EV_READ		EPOLLIN
+#define EV_WRITE	EPOLLOUT
+#define EV_ERROR	EPOLLERR
 
 class NetEvent
 {
@@ -27,7 +33,7 @@ public:
 			ssize_t n = read(sockfd_, &u ,sizeof(u));
 			if ( n != sizeof(u) )
 			{
-				cout << "weakup read " << n " bytes." << endl;
+				cout << "weakup read " << n << " bytes." << endl;
 			}
 		}
 		return 0;
@@ -48,9 +54,21 @@ public:
 	{
 		event_ |= EV_READ;
 	}
+	virtual void disableRead()
+	{
+		event_ &= ~EV_READ;
+	}
 	virtual void enableWrite()
 	{
 		event_ |= EV_WRITE;
+	}
+	virtual void disableWrite()
+	{
+		event_ &= ~EV_WRITE;
+	}
+	virtual void setNoneEvent()
+	{
+		event_ = EV_NONE;
 	}
 	int event() const
 	{
@@ -76,7 +94,7 @@ public:
 	{
 		return oper_;
 	}
-private:
+protected:
 	int event_;
 	int sockfd_;
 	int revent_;

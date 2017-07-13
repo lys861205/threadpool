@@ -4,25 +4,26 @@
 #include <vector>
 using namespace std;
 
-class TcpEvent;
+class NetEvent;
 
-typedef vector<TcpEvent*> TcpEventList;
+typedef vector<NetEvent*> NetEventList;
+typedef vector<NetEvent*>::iterator NetEventListIter;
 
 
 class Poller
 {
 public:
-	Poller();
-	virtual ~Poller();
-	void updateEvent(TcpEvent* pEvent)
+	Poller(){}
+	virtual ~Poller(){}
+	virtual void updateEvent(NetEvent* pEvent)
 	{
 	}
-	void update(int op, TcpEvent* pEvent)
+	virtual void update(int op, NetEvent* pEvent)
 	{
 	}
-	virtual int poll(int timeoutMs, TcpEventList& rOutEventList);
+	virtual int poll(int timeoutMs, NetEventList& rOutEventList){}
 private:
-	TcpEventList tcpConnectVec_;
+	NetEventList tcpConnectVec_;
 	
 };
 

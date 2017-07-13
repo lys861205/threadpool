@@ -58,7 +58,7 @@ private:
 class ThreadPool
 {
 public:
-	ThreadPool(ThreadLoop* loop, int num=2):
+	ThreadPool(ThreadLoop* loop, int num=0):
 		loop_(loop),
 		numThreads_(num),
 		next_(0)
@@ -72,8 +72,9 @@ public:
 		}
 		vecThread_.clear();
 	}
-	void start()
+	void start(int n = 2)
 	{
+		numThreads_ = numThreads_ > n ? numThreads_: n;
 		for ( int i=0; i<numThreads_; ++i )
 		{
 			char buf[32] = {0};

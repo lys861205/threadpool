@@ -4,6 +4,9 @@
 #include "Mutex.h"
 #include <list>
 #include <vector>
+#include <sys/eventfd.h>
+#include <unistd.h>
+#include <iostream>
 #include "poller.h"
 #include "epoll.h"
 using namespace std;
@@ -14,7 +17,7 @@ int createEventfd()
   int evtfd = ::eventfd(0, EFD_NONBLOCK | EFD_CLOEXEC);
   if (evtfd < 0)
   {
-    LOG_SYSERR << "Failed in eventfd";
+    cout  << "Failed in eventfd" << endl;;
     abort();
   }
   return evtfd;
@@ -27,11 +30,12 @@ public:
 		quit_(false),
 		tid_(CurrentThread::tid()),
 		poller_(new EPoller()),
-		wakeupEvent_(new TcpEvent(createEventfd()),
+		wakeupEvent_(new NetEvent(createEventfd())),
 		needwakeup_(true)
 	{
 		assert(poller_);
 		assert(wakeupEvent_);
+		wakeupEvent_->enableRead();
 		poller_->updateEvent(wakeupEvent_);
 	}
 	~ThreadLoop()
@@ -53,7 +57,7 @@ public:
 		while(!quit_)
 		{
 			activeEventList_.clear();
-			int ret = poller_.poll(10000, activeEventList_);
+			int ret = poller_->poll(10000, activeEventList_);
 			if ( ret == 0 )
 			{
 				continue;
@@ -64,7 +68,7 @@ public:
 				continue;
 			}
 			needwakeup_ = false;
-			TcpEventListIter it;
+			NetEventListIter it;
 			for ( it=activeEventList_.begin(); it != activeEventList_.end(); ++it )
 			{
 				(*it)->handleEvent();
@@ -78,7 +82,7 @@ public:
 	}
 	void doPendingEvent()
 	{
-		TcpEventList tmpPendingEvent;
+		NetEventList tmpPendingEvent;
 		{
 			MUTEX_LOCK(mutex_);
 			tmpPendingEvent.swap(pendingEventList_);
@@ -89,7 +93,7 @@ public:
 			poller_->updateEvent(tmpPendingEvent[i]);
 		}
 	}
-	void postEvent(TcpEvent* pEvent)
+	void postEvent(NetEvent* pEvent)
 	{
 		if ( isCurrentThread() )
 		{
@@ -126,9 +130,9 @@ private:
 	pid_t tid_;
 	Mutex mutex_;
 	Poller*	poller_;
-	TcpEventList activeEventList_;
-	TcpEventList pendingEventList_;
-	TcpEvent* wakeupEvent_;
+	NetEventList activeEventList_;
+	NetEventList pendingEventList_;
+	NetEvent* wakeupEvent_;
 	bool needwakeup_;
 };
 
